@@ -4,13 +4,22 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.models import User
 
+from .models import Chat
+
+from django.utils import timezone
+
 def ask_answer(message):
     pass
 
 def chatbot(request):
+    # сохраняет в базе данных сообщения только тех пользователей, которые зарегестрированы
+    
     if request.method =='POST':
         message=request.POST.get('message')
         response='Hi! This is my response' # ask_answer(message)
+        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now()) #это сохраняет вопрос
+        # и ответ в базе данных админки
+        chat.save()
         return JsonResponse({'message':message, 'response':response})
     return render(request, 'chatbot.html')
 
